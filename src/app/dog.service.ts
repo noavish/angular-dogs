@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 import { Dog } from './dog';
+import {Observable} from 'rxjs/Observable';
 
 const DOGS: Dog[] = [
         {id: 1, name: 'Rex', weight: 20, birthDate: new Date(2006, 2, 21)},
@@ -14,23 +16,25 @@ const DOGS: Dog[] = [
 export class DogService {
   dogs: Dog[] = DOGS;
 
-  constructor() {}
-  
-  getDogs(): Dog[] {
-  	return this.dogs;
+  constructor( private http: HttpClient ) {}
+
+  getDogs(): Observable<Dog[]> {
+    return this.http.get<Dog[]>('/api/dogs');
   }
 
-  addDog(newDog: Dog){
-  	newDog.id = this.generateId();
-  	this.dogs.push(newDog);
+  addDog(newDog: Dog): Observable<Dog> {
+    return this.http.post<Dog>('/api/dogs', { dog: newDog });
   }
 
-  editDog(id: Number, dog : Dog) {
-    var updateDogIndex = this.dogs.findIndex((dog) => dog.id == id);
-    this.dogs[updateDogIndex] = dog;
+  editDog(newDog: Dog, id: number): Observable<Dog> {
+    return this.http.put<Dog>(`/api/dogs/${id}`, { dog: newDog });
+  }
+
+  deleteDog(id: number): Observable<Dog> {
+    return this.http.delete<Dog>(`/api/dogs/${id}`);
   }
 
   generateId (): number {
-  	return this.dogs[this.dogs.length - 1].id + 1;
+    return this.dogs[this.dogs.length - 1].id + 1;
   }
 }

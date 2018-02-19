@@ -11,14 +11,14 @@ const DOGS = [
 
 /* GET api listing. */
 router.get('/dogs', (req, res) => {
-  res.send(JSON.stringify(DOGS));
+  res.status(500).send("Unable to access DB");
 });
 
 router.post('/dogs', (req, res) => {
     var dog = req.body.dog;
     dog.id = generateId();
     DOGS.push(dog);
-    res.send(JSON.stringify(dog)); 
+    res.send(JSON.stringify(dog));
 });
 
 router.put('/dogs/:id', (req, res) => {
@@ -32,7 +32,7 @@ router.put('/dogs/:id', (req, res) => {
 router.delete('/dogs/:id', (req, res) => {
     var dogIndex = DOGS.findIndex((dog) => dog.id.toString() == req.params.id.toString());
     DOGS.splice(dogIndex, 1);
-    res.send(200);
+    res.status(200).send({});
 });
 
 function generateId() {

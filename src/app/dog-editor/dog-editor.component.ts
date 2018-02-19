@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 
 import { Dog } from '../dog';
 import { DogService } from '../dog.service';
@@ -9,27 +9,32 @@ import { DogService } from '../dog.service';
   styleUrls: ['./dog-editor.component.css']
 })
 export class DogEditorComponent implements OnInit {
+  @Output() refresh = new EventEmitter();
   @Input() dog: Dog = new Dog();
   constructor(private dogService: DogService) { }
 
   ngOnInit() {
-
   }
 
   isEditMode() {
-    return this.dog.hasOwnProperty('id')
+    return this.dog.hasOwnProperty('id');
   }
 
-  cancelEditMode() { 
+  cancelEditMode() {
     this.dog = new Dog();
   }
 
   updateDog() {
-    this.dogService.editDog(this.dog.id, this.dog);
+    this.dogService.editDog(this.dog, this.dog.id)
+      .subscribe(data => {
+        this.refresh.emit();
+      });
   }
 
-  addDog(){
-  	this.dogService.addDog(this.dog);  		
+  addDog() {
+    this.dogService.addDog(this.dog)
+      .subscribe(data => {
+        this.refresh.emit();
+      });
   }
-
 }

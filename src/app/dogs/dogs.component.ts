@@ -11,15 +11,32 @@ export class DogsComponent implements OnInit {
   dogs: any[];
   title: string;
   selectedDog: Dog = new Dog();
+  error: string;
   constructor(private dogService: DogService) { }
 
   ngOnInit() {
-  	this.title = "Our dogs";
-  	this.dogs = this.dogService.getDogs();
+    this.title = "Our dogs";
+    this.refreshDogs();
+   }
+
+  refreshDogs() {
+    this.dogService.getDogs().subscribe(
+      dogs => this.dogs = dogs,
+      error => {
+        console.error(error);
+        this.error = error;
+      });
   }
 
   editDog(dog: Dog) {
-   this.selectedDog = Object.assign({}, dog);
+    this.selectedDog = Object.assign({}, dog);
+  }
+
+  deleteDog(dog: Dog) {
+    this.dogService.deleteDog(dog.id)
+      .subscribe(data => {
+        this.refreshDogs();
+      });
   }
 
 }
